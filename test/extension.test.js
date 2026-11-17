@@ -51,17 +51,33 @@ for (const browserType of [chromium, firefox]) {
       assert.deepEqual(message, comment.filter((type) => !type.endsWith("_math")))
     })
 
-    test("collaborative editors keep $...$ as text and preview it rendered", async () => {
+    test("collaborative editors keep $...$ as text and preview only the formula at the caret", async () => {
+      const shown = ".lexxy-math-preview:not([hidden])"
+      const hidden = ".lexxy-math-preview[hidden]"
+      const previewMath = () => page.$eval(`${shown} annotation`, (annotation) => annotation.textContent)
+
       await page.click("#message [contenteditable]")
-      await page.keyboard.type("Energy $E=mc^2$ ok")
-      await page.waitForSelector(".lexxy-math-preview:not([hidden]) .katex")
+      await page.keyboard.type("Energy $E=mc^2$")
+      await page.waitForSelector(`${shown} .katex`)
+      assert.equal(await previewMath(), "E=mc^2")
+      assert.ok(!(await page.textContent(shown)).includes("Energy"))
 
-      assert.equal(await editorValue("message"), "<p>Energy $E=mc^2$ ok</p>")
+      await page.keyboard.type(" and more text")
+      await page.waitForSelector(hidden, { state: "attached" })
+
+      // Back into the formula, then out to the end of the line again
+      const steps = " and more text".length + 4
+      for (let i = 0; i < steps; i++) await page.keyboard.press("ArrowLeft")
+      await page.waitForSelector(`${shown} .katex`)
+      assert.equal(await previewMath(), "E=mc^2")
+
+      for (let i = 0; i < steps; i++) await page.keyboard.press("ArrowRight")
+      await page.keyboard.type(" then $$\\int_0^1 x\\,dx$$")
+      await page.waitForSelector(`${shown} .katex-display`)
+      assert.equal(await previewMath(), "\\int_0^1 x\\,dx")
+
+      assert.equal(await editorValue("message"), "<p>Energy $E=mc^2$ and more text then $$\\int_0^1 x\\,dx$$</p>")
       assert.equal(await page.$$eval("#message .katex", (elements) => elements.length), 0)
-
-      await page.keyboard.press("Enter")
-      await page.keyboard.type("no math here")
-      await page.waitForSelector(".lexxy-math-preview[hidden]", { state: "attached" })
     })
 
     test("typing $...$ creates inline math", async () => {

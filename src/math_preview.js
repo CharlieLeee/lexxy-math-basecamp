@@ -1,10 +1,10 @@
-import { renderTextMath } from "lexxy-math"
+import { findMath, renderMath } from "lexxy-math"
 
-// In collaborative editors math stays $...$ text in the shared document, so the line being
-// edited is previewed, rendered, in a popup just below it. The document itself is untouched.
+// In collaborative editors math stays $...$ text in the shared document. While the caret is
+// in (or right next to) a formula, that formula is shown rendered in a popup under it.
+// The document itself is untouched.
 
 const EDITABLE = "lexxy-editor[collaboration] [contenteditable]"
-const BLOCK = "p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th"
 
 export const PREVIEW_CSS = `
 .lexxy-math-preview {
@@ -15,7 +15,7 @@ export const PREVIEW_CSS = `
   color: var(--lexxy-color-ink, inherit);
   max-width: min(640px, calc(100vw - 32px));
   overflow-x: auto;
-  padding: 0.5em 0.75em;
+  padding: 0.35em 0.6em;
   pointer-events: none;
   position: fixed;
   z-index: 1000;
@@ -25,7 +25,7 @@ export const PREVIEW_CSS = `
   display: none;
 }
 
-.lexxy-math-preview > * {
+.lexxy-math-preview .katex-display {
   margin: 0;
 }
 `
@@ -52,45 +52,49 @@ export function previewCollaborativeMath() {
 }
 
 function update(preview) {
-  const block = currentBlock()
-  const rendered = block && renderedCopy(block)
-
-  if (!rendered) {
+  const formula = formulaAtCaret()
+  if (!formula) {
     preview.hidden = true
     return
   }
 
   if (!preview.isConnected) document.body.append(preview)
-  preview.replaceChildren(rendered)
+  preview.innerHTML = renderMath(formula.latex, { displayMode: formula.displayMode })
   preview.hidden = false
-  position(preview, block)
+  position(preview, formula.range.getBoundingClientRect())
 }
 
-// The block holding the caret, when it is inside a collaborative editor
-function currentBlock() {
-  const node = getSelection()?.anchorNode
-  const element = node?.nodeType === Node.TEXT_NODE ? node.parentElement : node
-  if (!element?.closest(EDITABLE)) return null
+// The formula around a collapsed caret in a collaborative editor, with a Range over its text
+function formulaAtCaret() {
+  const selection = getSelection()
+  if (!selection?.isCollapsed) return null
 
-  return element.closest(BLOCK)
+  const { anchorNode: node, anchorOffset: caret } = selection
+  if (node?.nodeType !== Node.TEXT_NODE || !node.parentElement.closest(EDITABLE)) return null
+
+  const formula = mathAround(node.nodeValue, caret)
+  if (!formula) return null
+
+  const range = document.createRange()
+  range.setStart(node, formula.start)
+  range.setEnd(node, formula.end)
+  return { ...formula, range }
 }
 
-// A rendered copy of the block, or null when it holds no math
-function renderedCopy(block) {
-  if (!block.textContent.includes("$")) return null
-
-  const copy = block.cloneNode(true)
-  copy.removeAttribute("id")
-  renderTextMath(copy)
-
-  return copy.querySelector(".katex") ? copy : null
+function mathAround(text, caret) {
+  for (let offset = 0, match; (match = findMath(text.slice(offset))); offset += match.end) {
+    const start = offset + match.start
+    const end = offset + match.end
+    if (caret < start) return null
+    if (caret <= end) return { ...match, start, end }
+  }
+  return null
 }
 
-function position(preview, block) {
-  const rect = block.getBoundingClientRect()
-  const top = rect.bottom + 6
-  const fitsBelow = top + preview.offsetHeight < window.innerHeight
+function position(preview, rect) {
+  const below = rect.bottom + 6
+  const fitsBelow = below + preview.offsetHeight < window.innerHeight
 
-  preview.style.left = `${Math.max(8, rect.left)}px`
-  preview.style.top = `${fitsBelow ? top : rect.top - preview.offsetHeight - 6}px`
+  preview.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - preview.offsetWidth - 8))}px`
+  preview.style.top = `${fitsBelow ? below : rect.top - preview.offsetHeight - 6}px`
 }

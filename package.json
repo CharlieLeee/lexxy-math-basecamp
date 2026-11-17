@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "katex": "^0.18.4",
-    "lexxy-math": "^1.4.0"
+    "lexxy-math": "^1.5.0"
   },
   "devDependencies": {
     "@37signals/lexxy": "0.9.29",
