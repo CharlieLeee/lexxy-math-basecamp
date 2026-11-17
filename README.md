@@ -1,10 +1,31 @@
-# Math for Basecamp
+<p align="center">
+  <img src="icons/icon-128.png" width="96" height="96" alt="">
+</p>
 
-An unofficial browser extension that adds LaTeX math to [Basecamp](https://basecamp.com)'s editor, rendered with KaTeX. Built on [lexxy-math](https://github.com/CharlieLeee/lexxy-math), the math extension for [Lexxy](https://github.com/basecamp/lexxy), the editor Basecamp uses.
+<h1 align="center">Math for Basecamp</h1>
 
-| Writing a comment | Inline and block math |
-| --- | --- |
-| ![Typing math in a Basecamp comment](media/demo-comment.gif) | ![Inline and block formulas in a Basecamp comment](media/demo-inline-and-block.gif) |
+<p align="center">
+  Type LaTeX in Basecamp messages and comments. It renders as you type.
+</p>
+
+<p align="center">
+  <a href="https://github.com/CharlieLeee/lexxy-math-basecamp/releases/latest"><img src="https://img.shields.io/github/v/release/CharlieLeee/lexxy-math-basecamp?label=release" alt="Latest release"></a>
+  <a href="https://github.com/CharlieLeee/lexxy-math-basecamp/actions/workflows/ci.yml"><img src="https://github.com/CharlieLeee/lexxy-math-basecamp/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/lexxy-math"><img src="https://img.shields.io/npm/v/lexxy-math?label=lexxy-math" alt="lexxy-math on npm"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <img src="media/demo-inline-and-block.gif" width="820" alt="Inline and block formulas in a Basecamp comment">
+</p>
+
+An unofficial browser extension that adds math to [Basecamp](https://basecamp.com)'s editor, rendered with KaTeX. Built on [lexxy-math](https://github.com/CharlieLeee/lexxy-math), the math extension for [Lexxy](https://github.com/basecamp/lexxy), the editor Basecamp uses.
+
+## Features
+
+<p align="center">
+  <img src="media/demo-comment.gif" width="820" alt="Writing math in a Basecamp comment">
+</p>
 
 - **Inline math:** type `$E=mc^2$`
 - **Block math:** type `$$` on an empty line and press Enter
