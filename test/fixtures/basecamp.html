@@ -11,7 +11,9 @@
   <script async src="/test/fixtures/lexxy.js"></script>
 </head>
 <body>
-  <lexxy-editor class="lexxy-content" placeholder="Write away…" attachments="false"></lexxy-editor>
+  <!-- A comment editor, and a message editor that Basecamp syncs in real time -->
+  <lexxy-editor id="comment" class="lexxy-content" placeholder="Type your comment here…" attachments="false"></lexxy-editor>
+  <lexxy-editor id="message" class="lexxy-content" placeholder="Write away…" attachments="false" collaboration></lexxy-editor>
   <div class="formatted_content"><p>Posted $x^2$ and $$\int_0^1 x\,dx$$ while costs $5 and $10 stay text.</p></div>
 </body>
 </html>

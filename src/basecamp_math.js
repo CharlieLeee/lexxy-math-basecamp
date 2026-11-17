@@ -4,6 +4,9 @@
 
 import { MathExtension, renderContentMath, renderTextMath } from "lexxy-math"
 import katexCss from "katex-inline-css"
+import { PREVIEW_CSS } from "./math_preview.js"
+
+export { previewCollaborativeMath } from "./math_preview.js"
 
 // Where Basecamp shows posted rich text
 const POSTED_CONTENT = ".formatted_content, .trix-content, .lexxy-content"
@@ -16,12 +19,12 @@ export class BasecampMathExtension extends MathExtension {
 }
 
 // Basecamp's CSP blocks the KaTeX CDN but allows inline styles and data: fonts
-export function addKatexStyles() {
+export function addStyles() {
   if (document.querySelector("[data-lexxy-math-katex]")) return
 
   const style = document.createElement("style")
   style.dataset.lexxyMathKatex = ""
-  style.textContent = katexCss
+  style.textContent = katexCss + PREVIEW_CSS
   document.head.append(style)
 }
 

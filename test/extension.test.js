@@ -23,7 +23,8 @@ for (const browserType of [chromium, firefox]) {
         document.addEventListener("securitypolicyviolation", (event) => window.reportViolation(event.effectiveDirective))
       })
       await page.goto(`${server.url}test/fixtures/basecamp.html`)
-      await page.waitForSelector("lexxy-editor[connected]")
+      await page.waitForSelector("#comment[connected]")
+      await page.waitForSelector("#message[connected]")
       await page.waitForSelector(".formatted_content .katex")
     })
 
@@ -32,21 +33,41 @@ for (const browserType of [chromium, firefox]) {
       server?.close()
     })
 
-    const editorValue = () => page.$eval("lexxy-editor", (editor) => editor.value)
+    const editorValue = (id = "comment") => page.$eval(`#${id}`, (editor) => editor.value)
+    const nodeTypes = (id) => page.$eval(`#${id}`, (editor) => [...editor.editor._nodes.keys()].sort())
 
-    test("adds math to the editor without replacing Lexxy's own extensions", async () => {
-      const extensions = await page.$eval("lexxy-editor", (editor) => editor.baseExtensions.map((extension) => extension.name))
+    test("adds math to comment editors without replacing Lexxy's own extensions", async () => {
+      const extensions = await page.$eval("#comment", (editor) => editor.baseExtensions.map((extension) => extension.name))
       assert.equal(extensions.at(-1), "BasecampMathExtension")
       assert.ok(extensions.length > 1)
 
-      const nodes = await page.$eval("lexxy-editor", (editor) => [...editor.editor._nodes.keys()])
+      const nodes = await nodeTypes("comment")
       assert.ok(nodes.includes("inline_math") && nodes.includes("block_math"))
     })
 
-    test("typing $...$ creates inline math", async () => {
-      await page.click("lexxy-editor [contenteditable]")
+    test("collaborative editors keep Lexxy's exact node types, as Basecamp's sync requires", async () => {
+      const comment = await nodeTypes("comment")
+      const message = await nodeTypes("message")
+      assert.deepEqual(message, comment.filter((type) => !type.endsWith("_math")))
+    })
+
+    test("collaborative editors keep $...$ as text and preview it rendered", async () => {
+      await page.click("#message [contenteditable]")
       await page.keyboard.type("Energy $E=mc^2$ ok")
-      await page.waitForSelector("lexxy-editor .lexxy-math-inline .katex")
+      await page.waitForSelector(".lexxy-math-preview:not([hidden]) .katex")
+
+      assert.equal(await editorValue("message"), "<p>Energy $E=mc^2$ ok</p>")
+      assert.equal(await page.$$eval("#message .katex", (elements) => elements.length), 0)
+
+      await page.keyboard.press("Enter")
+      await page.keyboard.type("no math here")
+      await page.waitForSelector(".lexxy-math-preview[hidden]", { state: "attached" })
+    })
+
+    test("typing $...$ creates inline math", async () => {
+      await page.click("#comment [contenteditable]")
+      await page.keyboard.type("Energy $E=mc^2$ ok")
+      await page.waitForSelector("#comment .lexxy-math-inline .katex")
       assert.match(await editorValue(), /<span class="math-inline" data-math="E=mc\^2">/)
     })
 
@@ -57,7 +78,7 @@ for (const browserType of [chromium, firefox]) {
       await page.waitForFunction(() => document.activeElement?.matches("lexxy-math-editor textarea"))
       await page.keyboard.type("\\frac{1}{2}")
       await page.keyboard.press("Escape")
-      await page.waitForSelector("lexxy-editor .lexxy-math-block .katex")
+      await page.waitForSelector("#comment .lexxy-math-block .katex")
       assert.match(await editorValue(), /<div class="math-block" data-math="\\frac\{1\}\{2\}">/)
     })
 

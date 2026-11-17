@@ -1,6 +1,6 @@
 {
   "name": "lexxy-math-basecamp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Unofficial browser extension that adds LaTeX math to Basecamp's editor, built on lexxy-math",
   "type": "module",

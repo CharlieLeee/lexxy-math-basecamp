@@ -5,23 +5,28 @@
 // <lexxy-editor> is defined, add math to its base extensions. Editors then start with
 // math, without touching Basecamp's own Lexxy configuration. Posted messages and comments
 // are rendered too (renderPostedMath).
+//
+// Collaborative editors (messages, docs) are the exception: Basecamp only syncs an editor
+// whose node types match its own list exactly, so those keep math as $...$ text and get
+// a live preview instead (previewCollaborativeMath).
 
 const EDITOR_TAG = "lexxy-editor"
 let mathExtension = null
 
 whenAssigned(window, "Lexxy", () => {
   try {
-    const { BasecampMathExtension, addKatexStyles, renderPostedMath } = globalThis.__lexxyMathForBasecamp()
-    addKatexStyles()
+    const { BasecampMathExtension, addStyles, renderPostedMath, previewCollaborativeMath } = globalThis.__lexxyMathForBasecamp()
+    addStyles()
     mathExtension = BasecampMathExtension
     renderPostedMath()
+    previewCollaborativeMath()
   } catch (error) {
     console.warn("[lexxy-math] disabled:", error)
   }
 })
 
 whenDefining(EDITOR_TAG, (EditorElement) => {
-  addBaseExtension(EditorElement, () => mathExtension)
+  addBaseExtension(EditorElement, (editor) => editor.hasAttribute("collaboration") ? null : mathExtension)
 })
 
 function whenAssigned(target, key, callback) {
@@ -65,7 +70,7 @@ function addBaseExtension(EditorElement, getExtension) {
     configurable: true,
     get() {
       const extensions = get.call(this)
-      const extension = getExtension()
+      const extension = getExtension(this)
       return extension ? [...extensions, extension] : extensions
     }
   })
