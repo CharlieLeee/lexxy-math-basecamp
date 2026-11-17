@@ -1,15 +1,19 @@
 import { cp, mkdir, readFile, writeFile } from "node:fs/promises"
-import { join } from "node:path"
+import { basename, dirname, join } from "node:path"
+import { TARGETS } from "./targets.mjs"
 
-// Writes manifest.json (versioned from package.json), icons and bundled licenses into the build
-export function copyStatic(destination) {
+// For each output dist/<target>/, writes manifest.json (shared manifest, the target's keys,
+// version from package.json), icons and bundled licenses
+export function writeExtensionFiles() {
   return {
-    name: "copy-static",
-    async writeBundle() {
+    name: "extension-files",
+    async writeBundle({ file }) {
+      const destination = dirname(file)
       const { version } = JSON.parse(await readFile("package.json", "utf8"))
       const manifest = JSON.parse(await readFile("manifest.json", "utf8"))
-      await writeFile(join(destination, "manifest.json"), JSON.stringify({ ...manifest, version }, null, 2) + "\n")
+      const targetManifest = { ...manifest, ...TARGETS[basename(destination)], version }
 
+      await writeFile(join(destination, "manifest.json"), JSON.stringify(targetManifest, null, 2) + "\n")
       await cp("icons", join(destination, "icons"), { recursive: true })
 
       await mkdir(join(destination, "licenses"), { recursive: true })

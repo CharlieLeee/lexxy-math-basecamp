@@ -1,6 +1,10 @@
-# Chrome Web Store listing
+# Store listings
 
-Upload: `lexxy-math-basecamp.zip` (`npm run package`)
+Build the uploads with `npm run package`.
+
+# Chrome Web Store
+
+Upload: `lexxy-math-basecamp-chrome.zip`
 
 ## Store listing
 
@@ -59,3 +63,25 @@ The content script must run inside Basecamp pages to add math to Basecamp's edit
 **Data usage:** Collects no user data. (Leave every data category unchecked and certify the three disclosures.)
 
 **Privacy policy URL:** https://github.com/CharlieLeee/lexxy-math-basecamp/blob/main/PRIVACY.md
+
+# Firefox Add-ons (addons.mozilla.org)
+
+Submit at https://addons.mozilla.org/developers/addon/submit/ → **On this site**.
+
+- **Upload:** `lexxy-math-basecamp-firefox.zip`
+- **Source code:** Yes → upload `lexxy-math-basecamp-source.zip` (the scripts are bundled with Rollup)
+- **Name / summary / description:** same as the Chrome listing above (summary max 250 characters)
+- **Categories:** Other
+- **Support site:** https://github.com/CharlieLeee/lexxy-math-basecamp/issues
+- **License:** MIT
+- **Privacy policy:** paste PRIVACY.md (or link it)
+
+**Notes to reviewer:**
+
+```
+Build: Node 22, `npm ci && npm run build`. dist/firefox/ is the uploaded add-on; lexxy-math.js bundles the npm packages lexxy-math 1.4 and katex 0.18 (unminified). README.md describes the build.
+
+The content script runs in the page's main world at document_start on Basecamp only, because it registers a math extension with the page's own Lexxy editor (window.Lexxy). No permissions, no network requests, no remote code.
+
+innerHTML is only assigned KaTeX.renderToString output (trust disabled, which escapes input) or HTML-escaped error text.
+```

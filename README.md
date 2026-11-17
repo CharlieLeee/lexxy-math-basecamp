@@ -38,11 +38,13 @@ Not affiliated with or endorsed by 37signals or Basecamp.
 
 ## Install
 
-From the Chrome Web Store (once published), or unpacked:
+Works in Chrome (and Chromium browsers such as Edge, Brave and Arc) and Firefox 140+. Store listings are under review; until then, install from the [latest release](https://github.com/CharlieLeee/lexxy-math-basecamp/releases/latest):
 
-1. Download `lexxy-math-basecamp.zip` from the [latest release](https://github.com/CharlieLeee/lexxy-math-basecamp/releases/latest) and unzip it, or build it (see below)
-2. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the unzipped folder
-3. Refresh any open Basecamp tabs
+**Chrome:** download `lexxy-math-basecamp-chrome.zip` and unzip it. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the unzipped folder.
+
+**Firefox:** download `lexxy-math-basecamp-firefox.zip`. Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, and pick the zip. Firefox removes temporary add-ons on restart; the signed add-on from addons.mozilla.org stays.
+
+Then refresh any open Basecamp tabs.
 
 ## How it works
 
@@ -63,15 +65,15 @@ No data is collected or sent anywhere, and the extension makes no network reques
 
 ```bash
 npm install
-npx playwright install chromium
-npm test          # builds dist/ and runs the browser tests against a Basecamp-like fixture
-npm run package   # dist/ zipped as lexxy-math-basecamp.zip
-npm run assets    # icons and Chrome Web Store images
+npx playwright install chromium firefox
+npm test          # builds dist/chrome and dist/firefox, runs the browser tests in both, lints the Firefox build
+npm run package   # lexxy-math-basecamp-{chrome,firefox,source}.zip
+npm run assets    # icons and store images
 ```
 
-`test/fixtures/basecamp.html` reproduces how Basecamp loads Lexxy: an async bundle that assigns `window.Lexxy`, deferred element definition, and the relevant CSP.
+Both targets ship the same scripts; `rollup/targets.mjs` holds the only per-browser difference, the Firefox manifest keys. `test/fixtures/basecamp.html` reproduces how Basecamp loads Lexxy: an async bundle that assigns `window.Lexxy`, deferred element definition, and the relevant CSP.
 
-Releases: bump `version` in `package.json` (the manifest takes it from there) and push a `v*` tag. CI attaches the zip to the GitHub release.
+Releases: bump `version` in `package.json` (the manifest takes it from there) and push a `v*` tag. CI attaches the Chrome, Firefox and source zips to the GitHub release.
 
 ## License
 

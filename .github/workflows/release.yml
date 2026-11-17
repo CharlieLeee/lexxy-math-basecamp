@@ -21,12 +21,12 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
-      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npx playwright install --with-deps --only-shell chromium firefox
 
       - run: npm test
 
       - run: npm run package
 
-      - run: gh release create "$GITHUB_REF_NAME" lexxy-math-basecamp.zip --title "$GITHUB_REF_NAME" --generate-notes
+      - run: gh release create "$GITHUB_REF_NAME" lexxy-math-basecamp-*.zip --title "$GITHUB_REF_NAME" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}

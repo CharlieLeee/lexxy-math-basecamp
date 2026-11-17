@@ -1,14 +1,15 @@
 {
   "name": "lexxy-math-basecamp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Unofficial browser extension that adds LaTeX math to Basecamp's editor, built on lexxy-math",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "package": "npm run build && cd dist && zip -qr ../lexxy-math-basecamp.zip .",
-    "test": "npm run build && rollup -c rollup.config.test.mjs && node --test test/*.test.js",
-    "assets": "node scripts/store_assets.js"
+    "package": "npm run build && node scripts/package.js",
+    "test": "npm run build && rollup -c rollup.config.test.mjs && node --test test/*.test.js && npm run lint",
+    "assets": "node scripts/store_assets.js",
+    "lint": "web-ext lint --source-dir dist/firefox"
   },
   "dependencies": {
     "katex": "^0.18.4",
@@ -21,7 +22,8 @@
     "@rollup/plugin-inject": "^5.0.5",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "playwright": "1.65.1",
-    "rollup": "^4.44.1"
+    "rollup": "^4.44.1",
+    "web-ext": "^10.8.0"
   },
   "repository": {
     "type": "git",
