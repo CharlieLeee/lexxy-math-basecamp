@@ -2,7 +2,9 @@
 
 An unofficial browser extension that adds LaTeX math to [Basecamp](https://basecamp.com)'s editor, rendered with KaTeX. Built on [lexxy-math](https://github.com/CharlieLeee/lexxy-math), the math extension for [Lexxy](https://github.com/basecamp/lexxy), the editor Basecamp uses.
 
-![Math in the editor](store/screenshot-1280x800.png)
+| Writing a comment | Inline and block math |
+| --- | --- |
+| ![Typing math in a Basecamp comment](media/demo-comment.gif) | ![Inline and block formulas in a Basecamp comment](media/demo-inline-and-block.gif) |
 
 - **Inline math:** type `$E=mc^2$`
 - **Block math:** type `$$` on an empty line and press Enter
