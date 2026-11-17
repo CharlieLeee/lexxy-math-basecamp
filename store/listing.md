@@ -9,7 +9,7 @@ Upload: `lexxy-math-basecamp.zip` (`npm run package`)
 **Summary** (max 132 characters):
 Unofficial: type LaTeX math in Basecamp messages and comments. $...$ inline, $$ for blocks, rendered with KaTeX.
 
-**Category:** Productivity
+**Category:** Productivity → Workflow & Planning
 
 **Language:** English
 
@@ -34,10 +34,16 @@ Not affiliated with or endorsed by 37signals or Basecamp.
 
 **Images:**
 - Icon: `icons/icon-128.png`
-- Screenshot: `store/screenshot-1280x800.png`
+- Screenshots, in order: `store/basecamp-1-typing.png`, `store/basecamp-2-formatting.png`, `store/screenshot-1280x800.png`
 - Small promo tile: `store/promo-440x280.png`
 
-**Homepage / support URL:** https://github.com/CharlieLeee/lexxy-math-basecamp
+**Homepage URL:** https://github.com/CharlieLeee/lexxy-math-basecamp
+
+**Support URL:** https://github.com/CharlieLeee/lexxy-math-basecamp/issues
+
+**Official URL:** leave empty (Basecamp is not our site)
+
+**Mature content:** No
 
 ## Privacy practices
 
