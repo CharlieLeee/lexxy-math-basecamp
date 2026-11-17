@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- The parts of Basecamp's CSP that matter: no KaTeX CDN, inline styles and data: fonts allowed -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:">
+  <link rel="stylesheet" href="/node_modules/@37signals/lexxy/dist/stylesheets/lexxy.css">
+  <!-- The extension's content scripts, injected at document_start -->
+  <script src="/dist/lexxy-math.js"></script>
+  <script src="/dist/loader.js"></script>
+  <script async src="/test/fixtures/lexxy.js"></script>
+</head>
+<body>
+  <lexxy-editor class="lexxy-content" placeholder="Write away…" attachments="false"></lexxy-editor>
+  <div class="formatted_content"><p>Posted $x^2$ and $$\int_0^1 x\,dx$$ while costs $5 and $10 stay text.</p></div>
+</body>
+</html>
